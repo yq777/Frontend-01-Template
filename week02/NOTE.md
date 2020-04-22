@@ -1,1 +1,185 @@
-# 每周总结可以写在这里
+### 总结
+- 语言按语法分类
+  - 非形式语言
+    - 中文、英文
+  - 形式语言（乔姆斯基谱系）
+    - 0型无限制文法（不是无限制，其实有严格定义是相对其他几个语法而言）
+    - 1型上下文相关文法（对引擎实现者不友好）
+    - 2型上下文无关文法（主体上，javaScript 90%以上是上下文无关文法）
+    - 3型正则文法（能用正则表达式解析出来的，对表达能力的限制强）
+  - 大部分计算机语言大体上是上下文无关文法
+  - 文法分成：词法和语法，词法使用正则把语言变成单个的词，再把这些词作为输入流，进行语法分析
+  - 理解形式语言要理解产生式
+- 产生式（BNF巴科斯-诺尔范式）
+  - 用尖括号括起来的名称来表示语法结构名
+  - 语法结构分成基础结构和需要用其他语法结构定义的符合结构
+    - 基础结构称终结符
+    - 复合结构称非终结符
+  - 引号和中间的字符表示终结符
+  - 可以有括号
+  - *表示重复多次
+  - |表示或
+  - +表示至少一次
+  - e.g
+    - "a"  "b"   
+    - ```<Program> := "a"+ | "b"+（表示由a或者b组成）```
+    - ```<Program> :=  <Program>"a"+ |  <Program>"b"+（表示由若干个a和b组成）```
+    -  ```<Program>:=("a"+ | "b"+)+ （表示由若干个a和b组成）```
+  
+    - ```<Number> = "0" | "1" | "2" |... | "9" ```
+    - ```<DecimalNumber> = "0" | (("1" | "2" |... | "9") <Number>*) ```
+    - ```<Expression> = <DecimalNumber> "+" <DecimalNumber> ```
+    - ```<Expression> = <Expression> "+" <DecimalNumber> ```
+    - ```(<Expression> = <DecimalNumber>（表示一个数值）,  <Expression> = <DecimalNumber> | <Expression> "+" <DecimalNumber>（可以是数值，也可以是表达式）```
+    - ```<Number> = "0" | "1" | "2" |... | "9" ```
+    - ```<DecimalNumber> = "0" | (("1" | "2" |... | "9") <Number>*)```
+    - ```<PrimaryExpression> = <DecimalNumber> | "(" <LogicalExpression> ")" ```
+    - ```<MutiplicationExpression> = <MutiplicationExpression> | <MutiplicationExpression> "*" <PrimaryExpression> | <MutiplicationExpression> "/" <PrimaryExpression>```
+    - ```<AdditiveExpression> = <MutiplicationExpression> | <MutiplicationExpression> "+" <DecimalNumber> | <MutiplicationExpression> "-" <DecimalNumber> ```
+    - ```<LogicalExpression> = <AdditiveExpression> | <LogicalExpression> "||" <AdditiveExpression> | <LogicalExpression> "&&" <AdditiveExpression>```
+  - 通过产生式理解乔姆斯基谱系
+    - 0型 无限制型文法
+      - ?::=? 例子： ```<a> <b> ::= "c" <d>左右两边可以产生多个```
+    - 1型 上下文相关文法
+      - ```?<A>>?::=?<b>? 例子: "a"<b>"c" ::= "a" "x" "c"中间可变前后是有规定的```
+    - 2型 上下文无关文法
+      - ```<A> ::=?左边规定一个值，右边可变```
+    - 3型 正则文法
+      - ```<a> ::=<a>? 只允许做递归，正则支持回溯，不是线性的也就是字符串长度和递归次数不成正比，但大部时间是成正比的，回溯不容易写出来```
+  - 其他产生式
+      - EBNF
+      - ABNF
+  - JavaScript 不是BNF但很相似，在标准的Grammer Summary中，双冒号词法定义，单冒号语法定义
+  - 附录中记录了JavaScript所有的语法
+- 图灵完备性
+  - 图灵完备性
+    - 命令式-图灵机（在可计算范围内，所有编程语言必须具有，一台图灵机无法计算另一台图灵机什么时候停机，不是所有的东西都具有图灵完备性）
+      - goto
+      - if和while
+    - 声明式-lambda
+      - 递归
+  - 动态与静态
+    - 动态：
+      - 在用户的设备/在线服务器上
+      - 产品实际运行时
+      - Runtime
+    - 静态：
+      - 在程序员的设备上
+      - 产品开发时
+      - compiletime
+    - 静态特性越多越适合大规模的开发
+    - 凡是能用Array```<Parent>```的地方都能用Array```<Child>```
+    - 凡是能用Function```<Child>```的地方都能用Function```<Parent>```
+  - 弱类型开发爽维护bug难
+  - 有隐式转换的都是弱类型，不是静态语言就是弱类型
+- 类型系统
+  - 动态类型系统与静态类型系统
+  - 强类型与弱类型
+    - String + Number
+    - String == Boolean
+  - 复合类型
+    - 结构体
+    - 函数签名
+  - 子类型
+    - 逆变（逆向）/协变（同向）
+  - 一般命令式编程语言
+    - Atom
+      - Indentifier
+      - Literal
+    - Expression
+      - Atom
+      - Operator
+      - Punctuator
+    - Statement
+      - Expression
+      - Keyword
+      - Punctuator
+    - Structure
+      - Function
+      - Class
+      - Process
+      - Namespace
+      - ...
+    - Program
+      - Program
+      - Module
+      - Package
+      - Library
+    - C系语言process function不区分
+    - 语法 -> 语义 -> 运行时
+    - **右结合
+  - Atom
+  - SourceCharacter
+    - any Unicode code point
+    - ASCII字符128个，目前存在的字符集都要兼容ASCII字符
+    - Unicode运用最广，得到最广泛支持的字符集，支持各国字符集
+      - 0 - 128表示ASCII兼容部分，javaScript只支持Unicode,键盘能够敲出来
+      - CJK中文字符（Chinese, Japan, Korea）
+      - 不要用超出ASCII字符的做变量名
+      - 可以采用\u转义
+  - InputElement
+    - WhiteSpace
+      - ```<TAB>```制表符\t
+      - ```<VT>```纵向制表符\v
+      - ```<FF>```form feed
+      - ```<SP>``` 普通空格
+      - ```<NBSP>```no-break space(不分词空格例如：java script之间空格用```&nbsp;```做空格不会讲java script断开换行)
+      - ```<ZWNBSP>```zero width no-break space(Bit order mask)
+      - ```<USP>```只包含space
+    - LineTerminator
+      - ```<LF>```
+      - ```<CR>```
+      - ```<LS>```
+      - ```<PS>```
+      - 最后两个不要用因为不在ASCII范围
+    - Comment
+      - MultiLineComment ```//```
+      - SingleLineComment ```/**/```
+    - Token
+      - Punctuator （符号 = >等）
+      - Keywords (关键字 let)
+      - 以上两个定义代码结构
+      - Identifier (标识符 a)
+        - 变量名部分 不能和关键字重合
+        - 属性名 属性可以和关键字重合
+      - Literal （直接量 true ,null）
+        - Null
+        - Boolean
+        - Undefined
+        - Object
+        - Symbol
+        - Number
+          - IEEE 754 Double Float
+            - Sign(1) 符号位
+            - Exponent(11) 科学计数法*的部分
+            - Fraction(52)精度部分
+          - 0x 16
+          - 0b 2
+          - 0o 8
+        - String
+          - Character
+            - ASCII
+            - Unicode
+            - UCS U+0000 - U+FFFF
+            - GB(国标)
+              - GB2312
+              - GBK(GB13000)
+              - GB18030
+            - ISO-8859
+            - BIG5（繁体中文）
+          - Code point
+            - UTF
+              - a utf-8是一个字符
+              - a utf-16是两个字符，需要进行补码
+          - Encoding
+            - \x表示两位
+      - 以上两个定义代码中实际的有效信息
+      - 以上四个就构成整个代码主体部分
+      - IdentifierName
+        - Keywords
+        - Identifier
+        - Future reserved Keywords: enum（保留字）
+- Expression
+- Statement
+- Structure
+- Program
