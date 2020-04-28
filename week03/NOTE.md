@@ -1,1 +1,31 @@
-# 每周总结可以写在这里
+- 找出 JavaScript 标准里所有的对象
+  - Bound Function
+    - 特性：BoundFunctionCreate
+  - Array
+    - 特性：
+      - ArrayCreate
+      - ArraySpeciesCreate
+      - ArraySetLength
+  - String
+    - 特性：
+      - StringCreate
+      - StringGetOwnProperty
+  - Arguments
+    - 特性：
+      - CreateUnmappedArgumentsObject
+      - CreateMappedArgumentsObject
+      - MakeArgGetter
+      - MakeArgSetter
+  - Integer-Indexed(二进制流)
+    - 特性：
+      - IntegerIndexedObjectCreate
+      - IntegerIndexedElementGet
+      - IntegerIndexedElementSet
+  - Module Namespace
+    - 特性：
+      - ModuleNamespaceCreate
+  - Immutable Prototype(原型)
+    - 特性：
+      - SetImmutablePrototype
+- 分析有哪些对象是我们无法实现出来的
+- 这些对象都有哪些特性？
