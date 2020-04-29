@@ -1,31 +1,100 @@
 - 找出 JavaScript 标准里所有的对象
-  - Bound Function
-    - 特性：BoundFunctionCreate
-  - Array
+  - ordinary object
     - 特性：
-      - ArrayCreate
-      - ArraySpeciesCreate
-      - ArraySetLength
-  - String
-    - 特性：
-      - StringCreate
-      - StringGetOwnProperty
-  - Arguments
-    - 特性：
-      - CreateUnmappedArgumentsObject
-      - CreateMappedArgumentsObject
-      - MakeArgGetter
-      - MakeArgSetter
-  - Integer-Indexed(二进制流)
-    - 特性：
-      - IntegerIndexedObjectCreate
-      - IntegerIndexedElementGet
-      - IntegerIndexedElementSet
-  - Module Namespace
-    - 特性：
-      - ModuleNamespaceCreate
-  - Immutable Prototype(原型)
-    - 特性：
-      - SetImmutablePrototype
-- 分析有哪些对象是我们无法实现出来的
-- 这些对象都有哪些特性？
+      - 所有orfinary object 都有内置的slot [[Prototype]]它的值是null或者object, 被用来实现继承。
+      - [[Extensible]]被用来标识对象是否可以添加属性
+      - [[GetPrototypeOf]]
+      - [[SetPrototypeOf]]
+      - [[IsExtensible]]
+      - [[PreventExtensions]]
+      - [[GetOwnProperty]]
+      - [[DefineOwnProperty]]
+      - [[HasProperty]]
+      - [[Get]]
+      - [[Set]]
+      - [[Delete]]
+      - [[OwnPropertyKeys]]
+      - ObjectCreate
+      - OrdinaryCreateFromConstructor
+      - GetPrototypeFromConstructor
+  - exotic object
+    - Bound Function
+      - 特性：
+        - [[Call]]
+        - [[Construct]]
+        - BoundFunctionCreate
+    - Array
+      - 特性：
+        - [[DefineOwnProperty]]
+        - ArrayCreate
+        - ArraySpeciesCreate
+        - ArraySetLength
+    - String
+      - 特性：
+        - [[GetOwnProperty]]
+        - [[DefineOwnProperty]]
+        - [[OwnPropertyKeys]]
+        - StringCreate
+        - StringGetOwnProperty
+    - Arguments
+      - 特性：
+        - [[GetOwnProperty]]
+        - [[DefineOwnProperty]]
+        - [[Get]]
+        - [[Set]]
+        - [[Delete]]
+        - CreateUnmappedArgumentsObject
+        - CreateMappedArgumentsObject
+        - MakeArgGetter
+        - MakeArgSetter
+    - Integer-Indexed(二进制流)
+      - 特性：
+        - [[GetOwnProperty]]
+        - [[HasProperty]]
+        - [[DefineOwnProperty]]
+        - [[Get]]
+        - [[Set]]
+        - [[OwnPropertyKeys]]
+        - IntegerIndexedObjectCreate
+        - IntegerIndexedElementGet
+        - IntegerIndexedElementSet
+    - Module Namespace
+      - 特性：
+        - ModuleNamespaceCreate
+        - [[SetPrototypeOf]]
+        - [[IsExtensible]]
+        - [[PreventExtensions]]
+        - [[GetOwnProperty]]
+        - [[DefineOwnProperty]]
+        - [[HasProperty]]
+        - [[Get]]
+        - [[Set]]
+        - [[Delete]]
+        - [[OwnPropertyKeys]]
+    - Immutable Prototype(原型)
+      - 特性：
+        - SetImmutablePrototype
+        - [[SetPrototypeOf]]
+    - Proxy Object
+      - 特性：
+        - [[GetPrototypeOf]]
+        - [[SetPrototypeOf]]
+        - [[IsExtensible]]
+        - [[PreventExtensions]]
+        - [[GetOwnProperty]]
+        - [[DefineOwnProperty]]
+        - [[HasProperty]]
+        - [[Get]]
+        - [[Set]]
+        - [[Delete]]
+        - [[OwnPropertyKeys]]
+        - [[Call]]
+        - [[Construct]]
+        - ProxyCreate
+  - standard object
+  - built-in object
+    - Boolean
+    - String
+    - Number
+    - Symbol
+- built-in object是我们无法实现出来的
