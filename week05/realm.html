@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://gw.alipayobjects.com/os/antv/pkg/_antv.g6-3.4.9/dist/g6.min.js"></script>
+    <title>Realm global Objects</title>
+    <style>
+        html,
+        body,
+        #container {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        function getDataSource() {
+            const globalproperties = [
+                "eval",
+                "isFinite",
+                "isNaN",
+                "parseFloat",
+                "parseInt",
+                "decodeURI",
+                "decodeURIComponent",
+                "encodeURI",
+                "encodeURIComponent",
+                "BigInt",
+                "Array",
+                "Date",
+                "RegExp",
+                "Promise",
+                "Intl",
+                "WebAssembly",
+                "Proxy",
+                "Map",
+                "WeakMap",
+                "Set",
+                "WeakSet",
+                "Function",
+                "Boolean",
+                "String",
+                "Number",
+                "Symbol",
+                "Object",
+                "Error",
+                "EvalError",
+                "RangeError",
+                "ReferenceError",
+                "SyntaxError",
+                "TypeError",
+                "URIError",
+                "ArrayBuffer",
+                "SharedArrayBuffer",
+                "DataView",
+                "Float32Array",
+                "Float64Array",
+                "Int8Array",
+                "Int16Array",
+                "Int32Array",
+                "Uint8Array",
+                "Uint16Array",
+                "Uint32Array",
+                "Uint8ClampedArray",
+                "BigInt64Array",
+                "BigUint64Array",
+                "Atomics",
+                "JSON",
+                "Math",
+                "Reflect"
+            ];
+            let queue = [];
+            for (let p of globalproperties) {
+                queue.push({
+                    path: [p],
+                    object: this[p]
+                })
+            }
+            let current;
+            let set = new Set();
+            let path = [];
+            while (queue.length) {
+                current = queue.shift();
+                if (set.has(current.object)) {
+                    continue;
+                }
+                set.add(current.object);
+                let pathArr = [...current.path];
+                const name = pathArr.pop();
+                const object = {
+                    id: current.path.join("."),
+                    label: name,
+                    pId: pathArr.join(".") ? pathArr.join(".") : 'realm'
+                }
+                path.push(object);
+                const proto = Object.getPrototypeOf(current.object);
+                if (proto) {
+                    queue.push({
+                        path: current.path.concat(["__proto__"]),
+                        object: proto
+                    })
+                }
+                for (let p of Object.getOwnPropertyNames(current.object)) {
+                    var property = Object.getOwnPropertyDescriptor(current.object, p);
+                    if (property.hasOwnProperty("value") && (property.value !== null && (typeof property.value === 'object' || typeof property.value === 'function')) && property.value instanceof Object) {
+                        queue.push({
+                            path: current.path.concat([p]),
+                            object: property.value
+                        })
+                    }
+                    if (property.hasOwnProperty("get") && typeof property.get === 'function') {
+                        queue.push({
+                            path: current.path.concat([p]),
+                            object: property.get
+                        })
+                    }
+                    if (property.hasOwnProperty("set") && typeof property.set === 'function') {
+                        queue.push({
+                            path: current.path.concat([p]),
+                            object: property.set
+                        })
+                    }
+
+                }
+            }
+            return path;
+        }
+
+        const arrayToTree = (
+            array = [],
+            labelKey = 'label',
+            id = 'id',
+            pid = 'pId',
+            children = 'children'
+        ) => {
+            const data = array;
+            const result = [];
+            const hash = {};
+            data.forEach((item, index) => {
+                hash[data[index][id]] = {
+                    ...data[index],
+                    label: data[index][labelKey],
+                    id: data[index][id],
+                };
+            });
+            data.forEach(item => {
+                const hashVP = hash[item[pid]];
+                if (hashVP) {
+                    !hashVP[children] && (hashVP[children] = []);
+                    hashVP[children].push(hash[item[id]]);
+                } else {
+                    result.push(hash[item[id]]);
+                }
+            });
+            return result;
+        };
+    </script>
+    <script>
+        const dataSource = getDataSource();
+        const data = arrayToTree([...dataSource, { id: 'realm', name: 'realm', pId: void 0 }]);
+        const width = document.getElementById('container').scrollWidth;
+        const height = document.getElementById('container').scrollHeight;
+        const graph = new G6.TreeGraph({
+            container: 'container',
+            width,
+            height,
+            modes: {
+                default: [
+                    {
+                        type: 'collapse-expand',
+                        onChange: function onChange(item, collapsed) {
+                            console.log(item, collapsed)
+                            const data = item.get('model').data;
+                            data.collapsed = collapsed;
+                            return true;
+                        },
+                    },
+                    'drag-canvas',
+                    'zoom-canvas',
+                ],
+            },
+            defaultNode: {
+                size: 26,
+                anchorPoints: [
+                    [0, 0.5],
+                    [1, 0.5],
+                ],
+                style: {
+                    fill: '#C6E5FF',
+                    stroke: '#5B8FF9',
+                },
+            },
+            defaultEdge: {
+                type: 'cubic-horizontal',
+                style: {
+                    stroke: '#A3B1BF',
+                },
+            },
+            layout: {
+                type: 'mindmap',
+                direction: 'H',
+                getHeight: () => {
+                    return 16;
+                },
+                getWidth: () => {
+                    return 16;
+                },
+                getVGap: () => {
+                    return 8;
+                },
+                getHGap: () => {
+                    return 100;
+                },
+            },
+        });
+
+        let centerX = 0;
+        graph.node(function (node) {
+            let position = 'top';
+            if (node.id === 'global') {
+                centerX = node.x;
+            } else {
+                if (node.x > centerX) {
+                    position = node.children ? 'left' : 'right';
+                } else {
+                    position = node.children ? 'right' : 'left';
+                }
+            }
+
+            return {
+                label: node.name,
+                labelCfg: {
+                    position,
+                    offset: 5,
+                },
+            };
+        });
+        graph.data(data[0]);
+        graph.render();
+        graph.fitView();
+    </script>
+
+</body>
+
+</html>
