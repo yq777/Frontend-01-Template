@@ -96,7 +96,7 @@
                 const object = {
                     id: current.path.join("."),
                     label: name,
-                    pId: pathArr.join(".") ? pathArr.join(".") : 'realm'
+                    pId: pathArr.join(".") ? pathArr.join(".") : 'globalObject'
                 }
                 path.push(object);
                 const proto = Object.getPrototypeOf(current.object);
@@ -163,7 +163,7 @@
     </script>
     <script>
         const dataSource = getDataSource();
-        const data = arrayToTree([...dataSource, { id: 'realm', name: 'realm', pId: void 0 }]);
+        const data = arrayToTree([...dataSource, { id: 'globalObject', name: 'globalObject', pId: void 0 }]);
         const width = document.getElementById('container').scrollWidth;
         const height = document.getElementById('container').scrollHeight;
         const graph = new G6.TreeGraph({
