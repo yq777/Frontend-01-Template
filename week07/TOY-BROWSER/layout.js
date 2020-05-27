@@ -203,7 +203,7 @@ function layout(element) {
       });
       // 一行flex个数大于0
       if (flexTotal > 0) {
-        const currentMain = mainBase;
+        let currentMain = mainBase;
         item.map((children) => {
           const itemStyle = getStyle(children);
           // 获取style的flex值，

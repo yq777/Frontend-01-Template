@@ -8,17 +8,16 @@
             height: 500px;
         }
         body div #myid {
+            flex: 1;
             width: 400px;
             height: 200px;
             background-color: rgb(255, 80, 0);
             alignSelf: center;
-            display: flex;
         }
         body div .second {
             width: 200px;
             height: 200px;
             background-color: rgb(0, 255, 216);
-            display: flex;
         }
     </style>
 </head>
