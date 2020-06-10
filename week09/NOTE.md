@@ -17,3 +17,15 @@
 - 定义：XML与SGML
   - dtd文件里定义了html能写的属性，标签等
   - &nbsp替换空格操作不可取，可用css属性white-space: pre-wrap代替
+- 合法元素
+  - Element: ```<tagname>```...```</tagname>```
+  - Text: text
+  - Comment: <!--comment--->
+  - DocumentType: <!Document html>
+  - ProcessingInstruction(处理信息): <?a1?>
+  - CDATA: ```<![CDATA[]]>```
+- 修改操作
+  - appendChild
+  - insertBefore
+  - removeChild
+  - replaceChild
