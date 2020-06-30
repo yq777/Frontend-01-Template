@@ -1,0 +1,29 @@
+<script>
+    let regexp = /([0-9\.]+)|([ ]+)|([\r\n]+)|(\+)|(\-)|(\*)|(\/)/g;
+    const dictionary = ["Number", "Whitespace", "LineTerminator", "+", "-", "*", "/"];
+    function* tokenize(source) {
+        let result = null;
+        let lastIndex = 0;
+        do {
+            lastIndex = regexp.lastIndex;
+            result = regexp.exec(source);
+            if (!result) break;
+            if (regexp.lastIndex - lastIndex > result[0].length)
+                throw new Error(`Unexpected token  "${source.slice(lastIndex, regexp.lastIndex - lastIndex - result[0].length)}" !`);
+            let token = {
+                type: null,
+                value: null
+            }
+            for (let i = 0; i < dictionary.length; i++) {
+                if (result[i + 1]) {
+                    token.type = dictionary[i];
+                }
+            }
+            token.value = result[0];
+            yield token;
+        } while (result)
+    }
+    for (let token of tokenize("1024 + 10 * 25")) {
+        console.log(token);
+    }
+</script>
