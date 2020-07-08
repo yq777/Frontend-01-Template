@@ -1,1 +1,23 @@
 # 每周总结可以写在这里
+
+- 对象
+  - properties
+  - methods
+  - inherit
+- 组件
+  - Properties
+  - methods
+  - inherit
+  - attribute
+  - config & state
+  - event
+  - lifeCycle
+  - children(每个组件必须有children机制)
+- 一般attribute只允许字符串（react 的attribute和property互通）
+- 一般component通过event将内部的状态传出去
+- attribute vs property
+  - attribute 强调描述性
+  - property 强调从属关系
+- html里面attribute vs peopery
+  - html里面能改attribute不能设置修改property
+  - propery只能在js语言里设置， attribute可以在标记性语言中设置

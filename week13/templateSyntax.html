@@ -1,0 +1,63 @@
+
+<div id="text">Hello {{name}}!</div>
+<script>
+
+    let handlers = new Map();
+    let usedReactivities = [];
+    // 添加一个reactivities用来判断这个依赖是否已经收集了，做到对于同一个对象必须是同一个Proxy
+    let reactivities = new Map();
+    function reative(obj) {
+        if (reactivities.has(obj)) {
+            return reactivities.get(obj)
+        }
+        let proxy = new Proxy(obj, {
+            get(obj, prop) {
+                usedReactivities.push([obj, prop])
+                if (typeof obj[prop] === 'object') {
+                    // 保证每次返回的都是同一个对象，不会导致重复包装的问题
+                    return reative(obj[prop])
+                }
+                return obj[prop];
+            },
+            set(obj, prop, val) {
+                obj[prop] = val;
+                if (handlers.get(obj)) {
+                    if (handlers.get(obj).get(prop)) {
+                        for (let handler of handlers.get(obj).get(prop)) {
+                            handler()
+                        }
+                    }
+                }
+                return obj[prop];
+            }
+        });
+        reactivities.set(obj, proxy);
+        // 没法proxy自己
+        reactivities.set(proxy, proxy);
+        return proxy;
+    }
+    function effect(handler) {
+        usedReactivity = [];
+        handler();
+        for (let usedReactivity of usedReactivities) {
+            let [obj, prop] = usedReactivity;
+            if (!handlers.has(obj)) {
+                handlers.set(obj, new Map());
+            }
+            if (!handlers.get(obj).has(prop)) {
+                handlers.get(obj).set(prop, []);
+            }
+            handlers.get(obj).get(prop).push(handler);
+        }
+    }
+    let range = document.createRange();
+    range.setStart(document.getElementById("text").childNodes[0], 6);
+    range.setEnd(document.getElementById("text").childNodes[0], 14);
+    let data = reative({ text: 'world' });
+    effect(() => {
+        range.extractContents();
+        range.insertNode(document.createTextNode(data.text))
+    })
+
+
+</script>
