@@ -1,0 +1,152 @@
+<html>
+
+<head>
+    <title>carousel component</title>
+    <style>
+        .carousel {
+            width: 500px;
+            height: 300px;
+            font-size: 0;
+            white-space: nowrap;
+            outline: 1px solid blue;
+            /* 不参与任何的layout, 不改变排布 */
+            /* overflow: hidden; */
+            margin: auto;
+            /* zoom: 0.25; */
+        }
+
+        .carousel>img {
+            width: 500px;
+            height: 300px;
+            display: inline-block;
+            transition: transform ease 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script>
+        // 整体移动会增加transform面积，会有性能影响
+        class Carousel {
+            constructor(props) {
+                this.root = null;
+                this.data = null;
+            }
+            render() {
+                this.root = document.createElement("div");
+                this.root.classList.add("carousel");
+                for (let d of this.data) {
+                    let element = document.createElement("img");
+                    element.src = d;
+                    element.addEventListener("dragstart", event => event.preventDefault());
+                    this.root.appendChild(element);
+                }
+                let position = 0;
+                let nextPic = () => {
+                    let nextPostion = (position + 1) % this.data.length;
+
+                    let current = this.root.childNodes[position]; // 不能有dom操作，这是个视觉操作，改了dom会语义变了，元素之间顺序变了，所以只能改变css
+                    let next = this.root.childNodes[nextPostion];
+                    current.style.transition = "ease 0s";
+                    next.style.transition = "ease 0s";
+                    current.style.transform = `translateX(${- 100 * position}%)`;
+                    next.style.transform = `translateX(${100 - 100 * nextPostion}%)`;
+                    // setTimeout(function () {
+                    //     current.style.transition = "ease 0.5s";
+                    //     next.style.transition = "ease 0s.5";
+                    //     current.style.transform = `translateX(${-100 - 100 * position}%)`;
+                    //     next.style.transform = `translateX(${-100 * nextPostion}%)`;
+                    //     position = nextPostion;
+                    // }, 16)
+                    // 需要套用两个函数
+                    // 16ms是一帧动画，加延时是因为动画的生效需要一定时间
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () {
+                            // 用css控制
+                            current.style.transition = "";
+                            next.style.transition = "";
+                            current.style.transform = `translateX(${-100 - 100 * position}%)`;
+                            next.style.transform = `translateX(${-100 * nextPostion}%)`;
+                            position = nextPostion;
+                        })
+                    }, 16)
+
+
+                    setTimeout(nextPic, 3000);
+                }
+                // 解决第一张图片1闪而过的现象
+                setTimeout(nextPic, 3000);
+                this.root.addEventListener("mousedown", event => {
+                    let startX = event.clientX, startY = event.clientY;
+
+                    let lastPostion = (position - 1 + this.data.length) % this.data.length;
+                    let nextPostion = (position + 1) % this.data.length;
+
+                    let current = this.root.childNodes[position];
+                    let last = this.root.childNodes[lastPostion];
+                    let next = this.root.childNodes[nextPostion];
+
+                    // 关闭动画
+                    current.style.transition = "ease 0s";
+                    last.style.transition = "ease 0s";
+                    next.style.transition = "ease 0s";
+
+                    // 设置图片为值
+                    current.style.transform = `translateX(${- 500 * position}px)`; // 0
+                    last.style.transform = `translateX(${-500 - 500 * lastPostion}px)`; // 前一个
+                    next.style.transform = `translateX(${500 - 500 * nextPostion}px)`; // 后一个
+
+                    // 设置图片拖动距离
+                    let move = event => {
+                        current.style.transform = `translateX(${event.clientX - startX - 500 * position}px)`;
+                        last.style.transform = `translateX(${event.clientX - startX - 500 - 500 * lastPostion}px)`;
+                        next.style.transform = `translateX(${event.clientX - startX + 500 - 500 * nextPostion}px)`;
+                    };
+                    let up = event => {
+                        let offset = 0;
+                        // 控制左右拖动
+                        if (event.clientX - startX > 250) {
+                            offset = 1;
+                        } else if (event.clientX - startX < -250) {
+                            offset = -1
+                        }
+                        // 把style自带的css动画打开
+                        current.style.transition = "";
+                        last.style.transition = "";
+                        next.style.transition = "";
+
+                        // 播动画，动画的目标位置
+                        current.style.transform = `translateX(${offset * 500 - 500 * position}px)`; // 0
+                        last.style.transform = `translateX(${offset * 500 - 500 - 500 * lastPostion}px)`; // 前一个
+                        next.style.transform = `translateX(${offset * 500 + 500 - 500 * nextPostion}px)`; // 后一个
+
+                        // 修改当前图片位置，也就是确认当前图片的index
+                        position = (position - offset + this.data.length) % this.data.length;
+
+                        document.removeEventListener("mousemove", move);
+                        document.removeEventListener("mouseup", up);
+                    };
+                    document.addEventListener("mousemove", move)
+                    document.addEventListener("mouseup", up)
+                })
+            }
+        }
+        // create
+        let carousel = new Carousel();
+        // update
+        carousel.data = [
+            "https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg",
+            "https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg",
+            "https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg",
+            "https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg",
+        ];
+
+        // render 
+        carousel.render();
+        // mount
+        document.getElementById("container").appendChild(carousel.root)
+    </script>
+</body>
+
+</html>
