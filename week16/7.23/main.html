@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>测试</title>
+    <style>
+        body {
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="my" style="transform: translate(0, 0);width: 100px;height: 100px;background-color: skyblue;"></div>
+</body>
+<script src="./gesture.js"></script>
+<script>
+    document.addEventListener("contextmenu", event => event.preventDefault())
+    document.addEventListener("selectstart", event => event.preventDefault())
+    document.addEventListener("touchmove", event => event.preventDefault(), { passive: false })
+    let my = document.getElementById("my");
+    enableGesture(my);
+    let x = 0, y = 0;
+    my.addEventListener("pan", event => {
+        const { clientX, clientY, startX, startY } = event.detail;
+        my.style.transform = `translate(${clientX + x - startX}px, ${clientY + y - startY}px)`
+    })
+    my.addEventListener("panend", event => {
+        const { clientX, clientY, startX, startY } = event.detail;
+        x = (x + clientX - startX);
+        y = (y + clientY - startY);
+    })
+</script>
+
+</html>
