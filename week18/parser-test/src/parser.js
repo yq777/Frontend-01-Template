@@ -48,7 +48,7 @@ function emit(token) {
   }
 }
 
-const EOF = Symbol('EOF');
+export const EOF = Symbol('EOF');
 
 function data(c) {
   if (c == '<') {
@@ -185,7 +185,7 @@ function afterQuotedAttributeValue(c) {
   } else if (c == EOF) {
   } else {
     currentAttribute.value += c;
-    return doubleQuotedAttributeValue;
+    return beforeAttributeName;
   }
 }
 
@@ -214,7 +214,7 @@ function selfClosingStartTag(c) {
     currentToken.isSelfClosing = true;
     emit(currentToken);
     return data;
-  } else if (c == 'EOF') {
+  } else if (c == EOF) {
   } else {
   }
 }
@@ -227,6 +227,7 @@ function endTagOpen(c) {
     };
     return tagName(c);
   } else if (c == '>') {
+    return data;
   } else if (c == EOF) {
   } else {
   }
@@ -385,7 +386,8 @@ function afterAttributeName(c) {
   }
 }
 
-export function parseHTML(html) {
+// module.exports.parseHTML = function parseHTML(html) {
+  export function parseHTML(html) {
   let state = data;
   stack = [{ type: 'document', children: [] }];
   for (let c of html) {
@@ -396,4 +398,4 @@ export function parseHTML(html) {
   }
   state = state(EOF);
   return stack[0];
-}
+};

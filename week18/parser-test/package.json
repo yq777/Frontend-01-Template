@@ -4,8 +4,8 @@
   "description": "",
   "main": "parser.js",
   "scripts": {
-    "test": "mocha",
-    "coverage": "nyc moxha"
+    "test": "mocha --require @babel/register ./test/**/*.js",
+    "coverage": "nyc mocha"
   },
   "devDependencies": {
     "@babel/core": "^7.11.1",
