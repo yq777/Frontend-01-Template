@@ -1,0 +1,14 @@
+{
+    "name": "temp-name",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha --require @babel/register ./test/**/*.js",
+        "converage": "nyc mocha",
+        "start": "webpack-dev-server",
+        "build": "webpack"
+    },
+    "author": "yaoqin",
+    "license": "MIT"
+}
